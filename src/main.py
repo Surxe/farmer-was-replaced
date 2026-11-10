@@ -1,5 +1,4 @@
 from water import *
-from plant import *
 from harvest import *
 from reset import move_to_origin
 from load_balancing import get_item_needed_most
