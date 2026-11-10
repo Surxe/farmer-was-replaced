@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Copy this repo's src/ into The Farmer Was Replaced's Save0, overwriting existing files.
+"""Copy the .py code files in this repo's src/ into The Farmer Was Replaced's Save0, overwriting existing files.
 
 Run as ethan (dev can't read/write the Steam compatdata tree).
-Files in the save dir that aren't in src/ are left alone.
+Files in the save dir that aren't in src/ are left alone. Files in src/ that aren't
+in the save dir abort the deploy: create them in game first.
 """
 import shutil
 import sys
@@ -22,14 +23,21 @@ def main() -> int:
     if not SAVE_DIR.is_dir():
         print(f"missing save dir: {SAVE_DIR}", file=sys.stderr)
         return 1
-    count = 0
-    for src in REPO_SRC.rglob("*"):
-        if src.is_file():
-            dst = SAVE_DIR / src.relative_to(REPO_SRC)
-            dst.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(src, dst)
-            count += 1
-    print(f"copied {count} file(s) -> {SAVE_DIR}")
+    # Code only: save.json and other game state never get deployed.
+    files = [p.relative_to(REPO_SRC) for p in REPO_SRC.rglob("*.py") if p.is_file()]
+    missing = [rel for rel in files if not (SAVE_DIR / rel).is_file()]
+    if missing:
+        print("These files don't exist in the save yet:", file=sys.stderr)
+        for rel in missing:
+            print(f"  {rel}", file=sys.stderr)
+        print(
+            "Create each one manually in game first (same name), save the game, then re-run deploy.",
+            file=sys.stderr,
+        )
+        return 1
+    for rel in files:
+        shutil.copy2(REPO_SRC / rel, SAVE_DIR / rel)
+    print(f"copied {len(files)} file(s) -> {SAVE_DIR}")
     return 0
 
 

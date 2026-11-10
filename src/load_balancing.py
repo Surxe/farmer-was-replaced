@@ -1,5 +1,6 @@
 items = [Items.Hay, Items.Wood, Items.Carrot, Items.Pumpkin]
-def get_item_least_supply(exclude=Items.Pumpkin):
+def get_item_needed_most(exclude=Items.Pumpkin):
+	return Items.Hay
 	least_item_supply = 10000000
 	least_item_obj = -1
 	for item in items:
