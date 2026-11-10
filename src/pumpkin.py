@@ -2,15 +2,22 @@ from till import *
 from water import *
 
 def cycle_pump_grid():
-    for j in range(get_world_size()):
-		for i in range(get_world_size()):
-			if can_harvest() and in_final_pump_spot():
-				harvest()
-			do_till()
-			water()
-			plant(Entities.Pumpkin)
-			move(East)
-		move(North)
+    while True:
+		for j in range(get_world_size()):
+			for i in range(get_world_size()):
+				if can_harvest():
+					if in_final_pump_spot() or get_entity_type() != Entities.Pumpkin:
+						if get_entity_type() == Entities.Pumpkin:
+							harvest()
+							move(East)
+							move(North)
+							return
+						harvest()
+				do_till()
+				water()
+				plant(Entities.Pumpkin)
+				move(East)
+			move(North)
 
 # pumpkins will be forced in the bottom left half of the grid, 
 # regardless of load balancing
@@ -23,4 +30,4 @@ def in_final_pump_spot(pump_size=None):
 	# this is the last position thats checked for a pump. 
 	
 if __name__ == "__main__":
-	pass
+	cycle_pump_grid()
