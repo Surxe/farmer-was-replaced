@@ -28,12 +28,3 @@ while(True):
 	item_needed_most = get_item_needed_most()
 	item_grid_cycler = item_to_grid_cycler[get_item_needed_most()]
 	item_grid_cycler()
-
-	for j in range(get_world_size()):
-		for i in range(get_world_size()):
-			
-					
-			move(East)
-		move(North)
-	
-	

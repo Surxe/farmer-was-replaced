@@ -5,7 +5,7 @@ def profitted_water_this_run():
 	return num_items(Items.Water) - STARTING_WATER
 	
 
-def water(water_thresh):
+def water(water_thresh=.5):
 	# assumes were on tilled land already
 	# only till if we profitted water this cycle
 	# and if the current cell has < 35% water
