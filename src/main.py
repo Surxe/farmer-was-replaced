@@ -12,7 +12,6 @@ water_thresh = 0.5
 move_to_origin()
 do_a_flip()
 while(True):	
-	#print(water_thresh)
 	cycle_had_dead_pumps = False
 	for j in range(get_world_size()):
 		for i in range(get_world_size()):

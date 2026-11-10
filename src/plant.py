@@ -8,16 +8,15 @@ def plant_carrot(water_thresh):
 	plant(Entities.Carrot)
 	return water(water_thresh)
 
-def do_plant(num_carrots_more_than_wood, pump_size, water_thresh):
+def do_plant(num_carrots_more_than_wood, water_thresh):
 	# Plant what you have the least of
-	if is_pump_location(pump_size):
-		water_thresh = plant_pumpkin(water_thresh)
+	water_thresh = plant_pumpkin(water_thresh)
 		
-	if need_carrot_most():
+	if get_item_least_supply() == Items.Carrot:
 		water_thresh = plant_carrot(water_thresh)
-	elif need_hay_most():
+	elif get_item_least_supply() == Items.Hay:
 		plant(Entities.Grass)
-	elif need_wood_most():
+	elif get_item_least_supply() == Items.Wood:
 		# low on wood, prioritize trees
 		if get_pos_x()%2==0 and get_pos_y()%2==0:
 			plant(Entities.Tree)
