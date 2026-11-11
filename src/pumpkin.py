@@ -52,11 +52,6 @@ def cycle_pump_grid():
 			# snake cols->rows (East then North) and skip rows if theres more skippable rows than cols
 			# else, snake rows->cols (North then East) and skip cols
 			col_then_row = num_of_n_in_list(planted_in_row, 0) > num_of_n_in_list(planted_in_col, 0)
-			print(col_then_row)
-			do_a_flip()
-			print(planted_in_row)
-			do_a_flip()
-			print(planted_in_col)
 
 		for i in range(get_world_size()):
 			if iter>1:

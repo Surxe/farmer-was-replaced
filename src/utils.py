@@ -22,4 +22,3 @@ def num_of_n_in_list(list, n):
 
 if __name__ == '__main__':
 	my_arr = two_d_arr()
-	print(my_arr)
