@@ -1,5 +1,4 @@
 from water import *
-from harvest import *
 from reset import move_to_origin
 from load_balancing import get_item_needed_most
 from hay import cycle_hay_grid
@@ -22,7 +21,7 @@ item_to_grid_cycler = {
 #clear()
 move_to_origin()
 do_a_flip()
-while(True):	
+while(True):
 	cycle_had_dead_pumps = False
 	item_needed_most = get_item_needed_most()
 	item_grid_cycler = item_to_grid_cycler[get_item_needed_most()]

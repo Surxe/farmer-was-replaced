@@ -13,6 +13,13 @@ def one_d_arr(v=None):
 		arr.append(v)
 	return arr
 
+def num_of_n_in_list(list, n):
+	num = 0
+	for elem in list:
+		if elem == n:
+			num += 1
+	return num
+
 if __name__ == '__main__':
 	my_arr = two_d_arr()
 	print(my_arr)
