@@ -10,12 +10,23 @@ percent_grid_tilled = 0
 num_carrots_more_than_wood = num_items(Items.Carrot) - num_items(Items.Wood)
 num_pumps_more_than_carrots = num_items(Items.Pumpkin) - num_items(Items.Carrot)
 water_thresh = 0.5
-
+poly_culture_supported_entities = [
+	Entities.Grass,
+	Entities.Bush,
+	Entities.Tree,
+	Entities.Carrot
+]
 item_to_grid_cycler = {
 	Items.Hay: cycle_hay_grid,
 	Items.Carrot: cycle_carrot_grid,
 	Items.Wood: cycle_wood_grid,
 	Items.Pumpkin: cycle_pump_grid,
+}
+entity_to_item = {
+	Entities.Grass: Items.Hay,
+	Entities.Bush: Items.Wood,
+	Entities.Tree: Items.Wood,
+	Entities.Carrot: Items.Carrot,
 }
 
 #clear()
@@ -24,5 +35,6 @@ do_a_flip()
 while(True):
 	cycle_had_dead_pumps = False
 	item_needed_most = get_item_needed_most()
+
 	item_grid_cycler = item_to_grid_cycler[get_item_needed_most()]
 	item_grid_cycler()
