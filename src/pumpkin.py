@@ -2,6 +2,7 @@ from till import *
 from water import *
 from utils import two_d_arr, one_d_arr, num_of_n_in_list
 from reset import move_to_origin
+from fertilizer import fertilize_till_is_entity
 
 num_dead_pumps_thresh = 5 #maximum # of dead pumps that need to be present in order
 # to stop, plant, and fertiliezr spam each one until theyre confirmed to not be a dead pump.
@@ -71,12 +72,7 @@ def cycle_pump_grid():
 				if get_entity_type() == Entities.Dead_Pumpkin and get_world_size()**2 - total_planted >= num_dead_pumps_thresh: #RHS = # of dead pumps
 					# Theres num_dead_pumps_thresh or less dead pumpkins
 					# Loop at this specific cell until its a pumpkin
-					while get_entity_type() != Entities.Pumpkin:
-
-						harvest()
-						do_till()
-						plant(Entities.Pumpkin)
-						use_item(Items.Fertilizer)
+					fertilize_till_is_entity()
 				if can_harvest():
 					if get_entity_type() != Entities.Pumpkin:
 						# clear leftover crops so a pumpkin can go here
