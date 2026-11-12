@@ -40,6 +40,19 @@ def rev_dict(dict):
 		output[value].append(key)
 	return output
 
+def rev_lookup_is_in(dict, key, lookup_value):
+	# In a non-nested dict, returns whether the value is a element in the key's value
+	# Inputs:
+	# dict: {
+	#  	1: [a, b],
+	# 	2: [c]
+	# }
+	# key: 1
+	# value: b
+
+	# Outputs: True, because dict[1] is [a, b], and b is in [a, b]
+	return lookup_value in dict[key]
+
 if __name__ == '__main__':
 	my_arr = two_d_arr()
 
@@ -50,3 +63,7 @@ if __name__ == '__main__':
 	}
 	reversed_dict = rev_dict(input)
 	print(reversed_dict)
+
+	do_a_flip()
+	input_dict = reversed_dict
+	print(rev_lookup_is_in(input_dict, 1, "b"))

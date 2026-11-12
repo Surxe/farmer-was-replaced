@@ -2,15 +2,20 @@ from water import *
 from till import *
 from utils import two_d_arr
 from reset import move_to_origin
+from constants import item_to_entity, poly_culture_supported_entities
 
-
+def item_is_supported_by_poly_culture(item):
+	if item not in item_to_entity:
+		return None, False
+	entity = item_to_entity[item]
+	is_supported = poly_culture_supported_entities[entity]
+	return entity, is_supported
 
 def cycle_poly_grid(default_entity=Entities.Carrot):
 	preference_registry = two_d_arr()
 
 	def register_pref():
 		comp = get_companion()
-		print(comp)
 		comp_entity = comp[0]
 		comp_location = comp[1]
 		preference_registry[comp_location[0]][comp_location[1]] = comp_entity

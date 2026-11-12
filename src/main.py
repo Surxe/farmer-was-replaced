@@ -5,29 +5,23 @@ from hay import cycle_hay_grid
 from wood import cycle_wood_grid
 from carrot import cycle_carrot_grid
 from pumpkin import cycle_pump_grid
+from poly_culture import cycle_poly_grid, item_is_supported_by_poly_culture
 
 percent_grid_tilled = 0
 num_carrots_more_than_wood = num_items(Items.Carrot) - num_items(Items.Wood)
 num_pumps_more_than_carrots = num_items(Items.Pumpkin) - num_items(Items.Carrot)
 water_thresh = 0.5
-poly_culture_supported_entities = [
-	Entities.Grass,
-	Entities.Bush,
-	Entities.Tree,
-	Entities.Carrot
-]
 item_to_grid_cycler = {
 	Items.Hay: cycle_hay_grid,
 	Items.Carrot: cycle_carrot_grid,
 	Items.Wood: cycle_wood_grid,
 	Items.Pumpkin: cycle_pump_grid,
 }
-entity_to_item = {
-	Entities.Grass: Items.Hay,
-	Entities.Bush: Items.Wood,
-	Entities.Tree: Items.Wood,
-	Entities.Carrot: Items.Carrot,
-}
+# entity_to_item = {
+# 	Entities.Grass: Items.Hay,
+# 	Entities.Tree: Items.Wood,
+# 	Entities.Carrot: Items.Carrot,
+# }
 
 #clear()
 move_to_origin()
@@ -36,5 +30,13 @@ while(True):
 	cycle_had_dead_pumps = False
 	item_needed_most = get_item_needed_most()
 
-	item_grid_cycler = item_to_grid_cycler[get_item_needed_most()]
-	item_grid_cycler()
+	# If the item thats needed most is supported by poly culture
+	# then perform a poly_culture cycle, with the item's entity thats needed most as the default entity
+	entity_needed_most, is_supported = item_is_supported_by_poly_culture(item_needed_most)
+	if is_supported:
+		cycle_poly_grid(entity_needed_most)
+	else:
+		# If the item thats needed most is not supported by poly culture,
+		# call its dedicated cycle function
+		item_grid_cycler = item_to_grid_cycler[get_item_needed_most()]
+		item_grid_cycler()
