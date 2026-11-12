@@ -1,9 +1,6 @@
 from water import *
 from reset import move_to_origin
 from load_balancing import get_item_needed_most
-from hay import cycle_hay_grid
-from wood import cycle_wood_grid
-from carrot import cycle_carrot_grid
 from pumpkin import cycle_pump_grid
 from poly_culture import cycle_poly_grid, item_is_supported_by_poly_culture
 
@@ -12,9 +9,6 @@ num_carrots_more_than_wood = num_items(Items.Carrot) - num_items(Items.Wood)
 num_pumps_more_than_carrots = num_items(Items.Pumpkin) - num_items(Items.Carrot)
 water_thresh = 0.5
 item_to_grid_cycler = {
-	Items.Hay: cycle_hay_grid,
-	Items.Carrot: cycle_carrot_grid,
-	Items.Wood: cycle_wood_grid,
 	Items.Pumpkin: cycle_pump_grid,
 }
 # entity_to_item = {
