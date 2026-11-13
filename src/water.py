@@ -2,7 +2,7 @@ STARTING_WATER = num_items(Items.Water)
 REFILL_WATER_IF_BELOW_THRESH = .6
 WATER_THRESH_CHANGE_PER_UPDATE = .01
 
-# Only spend water if we're not at a not loss
+# Only spend water if we're not at a net loss
 def profitted_water_this_run():
 	return num_items(Items.Water) - STARTING_WATER
 
