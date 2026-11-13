@@ -7,16 +7,6 @@ sunflower_registry = two_d_arr()
 petal_registry = {} # {num_petals: num_sunflowers with that # of petals}
 peak_petal_count = 0
 
-def log():
-	print('peak_petal_count: ', peak_petal_count)
-	do_a_flip()
-	do_a_flip()
-	print('petal_registry: ', petal_registry)
-	do_a_flip()
-	do_a_flip()
-	print('sunflower_registry: ', sunflower_registry)
-	do_a_flip()
-	do_a_flip()
 
 def get_peak_petal_count():
 	# Returns the number of petals on the sunflower that has the most petals
@@ -55,23 +45,30 @@ def harvest_sunflower():
 	num_petals = sunflower_registry[get_pos_x()][get_pos_y()]
 	register_petals(num_petals, -1)
 
+def process_sunflower_tile():
+	# Assuming this tile is meant for sunflower, it processes it, meaning it either:
+	# * Harvests it if its giving 8x yield
+	# * Harvests it if its not yet a sunflower
+	# * Ignores it if its a sunflower thats not giving 8x yield
+	if can_harvest():
+		do_till()
+		water()
+		if get_entity_type() == Entities.Sunflower:
+			# Only harvest sunflower if it has the same # of petals as the
+			# most petals (even if this cell is the one that has the most)
+			num_petals = sunflower_registry[get_pos_x()][get_pos_y()]
+			if num_petals == peak_petal_count:
+				harvest_sunflower()
+				plant_sunflower()
+		else:
+			harvest()
+			plant_sunflower()
+
 def cycle_sunflower_grid():
 	global peak_petal_count
 	for i in range(get_world_size()):
 		for j in range(get_world_size()):
-			if can_harvest():
-				do_till()
-				water()
-				if get_entity_type() == Entities.Sunflower:
-					# Only harvest sunflower if it has the same # of petals as the
-					# most petals (even if this cell is the one that has the most)
-					num_petals = sunflower_registry[get_pos_x()][get_pos_y()]
-					if num_petals == peak_petal_count:
-						harvest_sunflower()
-						plant_sunflower()
-				else:
-					harvest()
-					plant_sunflower()
+			process_sunflower_tile()
 			move(East)
 		move(North)
 
