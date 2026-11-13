@@ -18,6 +18,7 @@ item_to_grid_cycler = {
 # }
 
 #clear()
+change_hat(Hats.Sunflower_Hat)
 move_to_origin()
 do_a_flip()
 while(True):
