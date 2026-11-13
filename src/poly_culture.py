@@ -44,4 +44,5 @@ def cycle_poly_grid(default_entity=Entities.Carrot):
 if __name__ == '__main__':
 	clear()
 	move_to_origin()
-	cycle_poly_grid()
+	while True:
+		cycle_poly_grid()

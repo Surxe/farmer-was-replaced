@@ -62,7 +62,7 @@ def process_sunflower_tile():
 	# * Harvests it if its giving 8x yield
 	# * Harvests it if its not yet a sunflower
 	# * Ignores it if its a sunflower thats not giving 8x yield
-	if can_harvest():
+	if can_harvest() or get_entity_type() == None: #or its blank
 		do_till()
 		water()
 		if get_entity_type() == Entities.Sunflower:
