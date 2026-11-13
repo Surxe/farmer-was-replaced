@@ -91,10 +91,15 @@ def cycle_pump_grid():
 						# mark it as fully grown
 						total_planted += set_cell_state(pump_registry, planted_in_row, planted_in_col, 'grown')
 				else:
-					total_planted += set_cell_state(pump_registry, planted_in_row, planted_in_col, 'planted')
-					do_till()
-					water()
-					plant(Entities.Pumpkin)
+					my_ent = get_entity_type()
+					if my_ent != None and my_ent != Entities.Dead_Pumpkin: # then its something else we can fertilize to get out of the way
+						fertilize_till_is_entity(Entities.Pumpkin)
+						total_planted += set_cell_state(pump_registry, planted_in_row, planted_in_col, 'grown')
+					else:
+						total_planted += set_cell_state(pump_registry, planted_in_row, planted_in_col, 'planted')
+						do_till()
+						water()
+						plant(Entities.Pumpkin)
 
 				do_move(col_then_row)
 			do_move(not col_then_row)
