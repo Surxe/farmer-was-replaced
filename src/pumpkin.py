@@ -4,10 +4,6 @@ from utils import two_d_arr, one_d_arr, num_of_n_in_list
 from reset import move_to_origin
 from fertilizer import fertilize_till_is_entity, profitted_fertilizer_this_run
 
-num_dead_pumps_thresh = 5 #maximum # of dead pumps that need to be present in order
-# to stop, plant, and fertiliezr spam each one until theyre confirmed to not be a dead pump.
-# Otherwise, it moves onto the next cell and lets it grow slowly per usual.
-
 total_yield = 0
 
 def do_move(col_then_row):
@@ -41,6 +37,7 @@ def cycle_pump_grid():
 	planted_in_row = one_d_arr(0) # indexed by y
 	planted_in_col = one_d_arr(0) # indexed by x
 	num_pump_items_cycle_start = num_items(Items.Pumpkin)
+	time_cycle_start = get_time()
 	total_planted = 0
 	iter = 1 # once its past the 1st iteration, pump registry is all planted
 	# on iter=2, pump registry is some combination of planted and fully grown, as it will have replaced the planted->dead->back to planted
@@ -55,7 +52,9 @@ def cycle_pump_grid():
 				# a full pass wraps back to the origin, which is part of it
 				harvest()
 				move_to_origin()
-				return num_items(Items.Pumpkin) - num_pump_items_cycle_start# of items
+				profit = num_items(Items.Pumpkin) - num_pump_items_cycle_start
+				time_taken = get_time() - time_cycle_start
+				return profit, time_taken # of items
 
 			# snake cols->rows (East then North) and skip rows if theres more skippable rows than cols
 			# else, snake rows->cols (North then East) and skip cols
@@ -72,12 +71,14 @@ def cycle_pump_grid():
 					do_move(not col_then_row)
 					continue
 			for j in range(get_world_size()):
-				num_dead_pumps = get_world_size()**2 - total_planted
 				# At this cell, if its a dead pumpkin, we can afford to spend fertilizer, and theres few enough dead pumps confirmed in total
-				if get_entity_type() == Entities.Dead_Pumpkin and num_dead_pumps >= num_dead_pumps_thresh and profitted_fertilizer_this_run() > 0:
-					# Theres num_dead_pumps_thresh or less dead pumpkins
-					# Then it becomes more efficient to stay at this position and spam fertilizer till its no longer a dead one
-					fertilize_till_is_entity()
+				if get_entity_type() == Entities.Dead_Pumpkin and profitted_fertilizer_this_run() > 0:
+					# After the # of dead pumpkins is low enough (its immediately low enough after 1st iter)
+					# it becomes more efficient to stay at this position and spam fertilizer till its no longer a dead one.
+					# One might think its advantageous to set a threshold for the # of dead pumps before applying this, except that for this
+					# first have to confirm the # of dead pumps, which takes a full 2nd iteration. So with a threshold of 1 or more confirmed pumps,
+					# it wouldnt be able to apply till iter3. Applying immediately on the 2nd iter is faster every time, at least at n=6 with the current dead pumpkin odds.
+					fertilize_till_is_entity(Entities.Pumpkin)
 				if can_harvest():
 					if get_entity_type() != Entities.Pumpkin:
 						# clear leftover crops so a pumpkin can go here
@@ -111,4 +112,13 @@ def in_final_pump_spot(pump_size=None):
 
 if __name__ == "__main__":
 	clear()
-	cycle_pump_grid()
+	sum_profit = 0
+	sum_time = 0
+	while True:
+		profit, time = cycle_pump_grid()
+		# Analytics
+		sum_profit += profit
+		sum_time += time
+		this_profit_rate = profit / time #pumpkins / second
+		avg_profit_rate = sum_profit / sum_time
+		print(this_profit_rate)
