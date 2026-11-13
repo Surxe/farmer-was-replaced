@@ -5,7 +5,10 @@ STARTING_FERTILIZER = num_items(Items.Fertilizer)
 
 # Only spend fertilizer if we're not at a net loss
 def profitted_fertilizer_this_run():
-	return num_items(Items.Fertilizer) - STARTING_FERTILIZER
+	profitted_fertilizer = num_items(Items.Fertilizer) - STARTING_FERTILIZER
+	if profitted_fertilizer < 0:
+		print("FERTILIZER PRODUCTION NOT SUFFICIENT, LOST FERTILIZER")
+	return profitted_fertilizer
 
 def fertilize_till_is_entity(entity):
 	# Fertilize spams a cell till its grown as the desired entity
