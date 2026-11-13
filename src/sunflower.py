@@ -7,6 +7,18 @@ sunflower_registry = two_d_arr()
 petal_registry = {} # {num_petals: num_sunflowers with that # of petals}
 peak_petal_count = 0
 
+# Poly culture farming is also capable of spending 10 slots on sunflowers
+def is_sunflower_designated_tile(x=None, y=None, n=10):
+	if x == None:
+		x = get_pos_x()
+	if y == None:
+		y = get_pos_y()
+	# n is the number of tiles remaining that are available to be designated as sunflower tiles
+	# the first n slots in reading order (left to right, top row down) are designated.
+	# y=0 is the bottom row, so the top row is y=size-1.
+	size = get_world_size()
+	index = (size - 1 - y) * size + x
+	return index < n
 
 def get_peak_petal_count():
 	# Returns the number of petals on the sunflower that has the most petals

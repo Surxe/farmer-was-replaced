@@ -3,6 +3,8 @@ from till import *
 from utils import two_d_arr
 from reset import move_to_origin
 from constants import item_to_entity, poly_culture_supported_entities
+from sunflower import *
+
 
 def item_is_supported_by_poly_culture(item):
 	if item not in item_to_entity:
@@ -22,17 +24,20 @@ def cycle_poly_grid(default_entity=Entities.Carrot):
 
 	for j in range(get_world_size()):
 		for i in range(get_world_size()):
-			if can_harvest():
-				harvest()
-			do_till()
-			water()
-			preferred_entity = preference_registry[i][j]
-			if preferred_entity == None: # if theres no preferred plant at this spot
-				plant(default_entity)
-				register_pref()
+			if is_sunflower_designated_tile():
+				process_sunflower_tile()
 			else:
-				plant(preferred_entity)
-				register_pref()
+				if can_harvest():
+					harvest()
+				do_till()
+				water()
+				preferred_entity = preference_registry[i][j]
+				if preferred_entity == None: # if theres no preferred plant at this spot
+					plant(default_entity)
+					register_pref()
+				else:
+					plant(preferred_entity)
+					register_pref()
 			move(East)
 		move(North)
 
