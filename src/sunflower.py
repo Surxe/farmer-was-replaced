@@ -7,6 +7,14 @@ sunflower_registry = two_d_arr()
 petal_registry = {} # {num_petals: num_sunflowers with that # of petals}
 peak_petal_count = 0
 
+def init_registries():
+	global sunflower_registry
+	sunflower_registry = two_d_arr()
+	global petal_registry
+	petal_registry = {}
+	global peak_petal_count
+	peak_petal_count = 0
+
 # Poly culture farming is also capable of spending 10 slots on sunflowers
 def is_sunflower_designated_tile(x=None, y=None, n=10):
 	if x == None:
