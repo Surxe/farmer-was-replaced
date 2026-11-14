@@ -5,6 +5,7 @@ from reset import move_to_origin
 sunflower_registry = two_d_arr()
 petal_registry = {} # {num_petals: num_sunflowers with that # of petals}
 peak_petal_count = 0
+num_sunflowers = 10 # the min # of sunflowers to reserve
 
 def init_registries():
 	global sunflower_registry
@@ -15,7 +16,7 @@ def init_registries():
 	peak_petal_count = 0
 
 # Poly culture farming is also capable of spending 10 slots on sunflowers
-def is_sunflower_designated_tile(x=None, y=None, n=10):
+def is_sunflower_designated_tile(x=None, y=None, n=num_sunflowers):
 	if x == None:
 		x = get_pos_x()
 	if y == None:
@@ -68,7 +69,7 @@ def process_sunflower_tile():
 	# * Harvests it if its giving 8x yield
 	# * Harvests it if its not yet a sunflower
 	# * Ignores it if its a sunflower thats not giving 8x yield
-	if can_harvest() or get_entity_type() == None: #or its blank
+	if can_harvest() or get_entity_type() in [None, Entities.Dead_Pumpkin]: #or its blank
 		water()
 		if get_entity_type() == Entities.Sunflower:
 			# Only harvest sunflower if it has the same # of petals as the
