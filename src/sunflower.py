@@ -1,6 +1,5 @@
 from utils import two_d_arr
 from water import *
-from till import do_till
 from reset import move_to_origin
 
 sunflower_registry = two_d_arr()
@@ -22,10 +21,9 @@ def is_sunflower_designated_tile(x=None, y=None, n=10):
 	if y == None:
 		y = get_pos_y()
 	# n is the number of tiles remaining that are available to be designated as sunflower tiles
-	# the first n slots in reading order (left to right, top row down) are designated.
-	# y=0 is the bottom row, so the top row is y=size-1.
-	size = get_world_size()
-	index = (size - 1 - y) * size + x
+	# the first n slots going left to right, bottom row up are designated.
+	# y=0 is the bottom row, so this matches the drone's East-then-North sweep from the origin.
+	index = y * get_world_size() + x
 	return index < n
 
 def get_peak_petal_count():
@@ -71,7 +69,6 @@ def process_sunflower_tile():
 	# * Harvests it if its not yet a sunflower
 	# * Ignores it if its a sunflower thats not giving 8x yield
 	if can_harvest() or get_entity_type() == None: #or its blank
-		do_till()
 		water()
 		if get_entity_type() == Entities.Sunflower:
 			# Only harvest sunflower if it has the same # of petals as the
