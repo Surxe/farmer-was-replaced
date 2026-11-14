@@ -1,11 +1,12 @@
 from utils import two_d_arr
 from water import *
+from till import do_till
 from reset import move_to_origin
 
 sunflower_registry = two_d_arr()
 petal_registry = {} # {num_petals: num_sunflowers with that # of petals}
 peak_petal_count = 0
-num_sunflowers = 10 # the min # of sunflowers to reserve
+num_sunflowers = get_world_size() # the min # of sunflowers to reserve
 
 def init_registries():
 	global sunflower_registry
@@ -15,17 +16,22 @@ def init_registries():
 	global peak_petal_count
 	peak_petal_count = 0
 
-# Poly culture farming is also capable of spending 10 slots on sunflowers
-def is_sunflower_designated_tile(x=None, y=None, n=num_sunflowers):
+# Sunflower tiles are the first n tiles going left to right, bottom row up.
+# y=0 is the bottom row, so this matches the drone's East-then-North sweep from the origin.
+def tile_index(x=None, y=None):
 	if x == None:
 		x = get_pos_x()
 	if y == None:
 		y = get_pos_y()
-	# n is the number of tiles remaining that are available to be designated as sunflower tiles
-	# the first n slots going left to right, bottom row up are designated.
-	# y=0 is the bottom row, so this matches the drone's East-then-North sweep from the origin.
-	index = y * get_world_size() + x
-	return index < n
+	return y * get_world_size() + x
+
+# Poly culture farming is also capable of spending n slots on sunflowers
+def is_sunflower_designated_tile(x=None, y=None, n=num_sunflowers):
+	return tile_index(x, y) < n
+
+# Whether this is the final sunflower tile the sweep reaches
+def is_last_sunflower_tile(x=None, y=None, n=num_sunflowers):
+	return tile_index(x, y) == n - 1
 
 def get_peak_petal_count():
 	# Returns the number of petals on the sunflower that has the most petals
@@ -54,7 +60,9 @@ def register_petals(num_petals, magnitude):
 		# sunflower, check if it has more petals than the current peak
 
 def plant_sunflower():
-	plant(Entities.Sunflower)
+	do_till() # sunflowers only grow on soil
+	if not plant(Entities.Sunflower):
+		return # nothing planted, so nothing to measure or register
 	num_petals = measure()
 	sunflower_registry[get_pos_x()][get_pos_y()] = num_petals
 	register_petals(num_petals, 1)
@@ -64,13 +72,29 @@ def harvest_sunflower():
 	num_petals = sunflower_registry[get_pos_x()][get_pos_y()]
 	register_petals(num_petals, -1)
 
+def adopt_unregistered_sunflower():
+	# A sunflower the registries dont know about (e.g. planted before main was
+	# restarted) gets measured and registered. Returns whether it adopted one.
+	if get_entity_type() != Entities.Sunflower:
+		return False
+	if sunflower_registry[get_pos_x()][get_pos_y()] != None:
+		return False
+	num_petals = measure()
+	sunflower_registry[get_pos_x()][get_pos_y()] = num_petals
+	register_petals(num_petals, 1)
+	return True
+
 def process_sunflower_tile():
 	# Assuming this tile is meant for sunflower, it processes it, meaning it either:
 	# * Harvests it if its giving 8x yield
 	# * Harvests it if its not yet a sunflower
 	# * Ignores it if its a sunflower thats not giving 8x yield
+	if adopt_unregistered_sunflower():
+		# dont harvest on the visit that adopts it: the peak isnt trustworthy
+		# until every existing sunflower has been registered (one full pass)
+		return
 	if can_harvest() or get_entity_type() in [None, Entities.Dead_Pumpkin]: #or its blank
-		water()
+		water(True)
 		if get_entity_type() == Entities.Sunflower:
 			# Only harvest sunflower if it has the same # of petals as the
 			# most petals (even if this cell is the one that has the most)
@@ -82,13 +106,19 @@ def process_sunflower_tile():
 			harvest()
 			plant_sunflower()
 
-def cycle_sunflower_grid():
-	global peak_petal_count
-	for i in range(get_world_size()):
-		for j in range(get_world_size()):
-			process_sunflower_tile()
-			move(East)
-		move(North)
+def cycle_sunflower(till_power=80):
+	# Sunflower left and right till done
+	dir = East
+	while(num_items(Items.Power) < till_power):
+		if num_sunflowers > get_world_size():
+			print("Expand world size or decrease num_sunflowers")
+			return
+		process_sunflower_tile()
+		if is_last_sunflower_tile():
+			dir = West
+		if get_pos_x() == 0:
+			dir = East
+		move(dir)
 
 if __name__ == '__main__':
 	clear()
@@ -96,4 +126,4 @@ if __name__ == '__main__':
 	do_a_flip()
 	do_a_flip()
 	while True:
-		cycle_sunflower_grid()
+		cycle_sunflower()

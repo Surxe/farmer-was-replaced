@@ -7,7 +7,7 @@ STARTING_FERTILIZER = num_items(Items.Fertilizer)
 def profitted_fertilizer_this_run():
 	profitted_fertilizer = num_items(Items.Fertilizer) - STARTING_FERTILIZER
 	if profitted_fertilizer < 0:
-		print("FERTILIZER PRODUCTION NOT SUFFICIENT, LOST FERTILIZER")
+		pass #print("FERTILIZER PRODUCTION NOT SUFFICIENT, LOST FERTILIZER")
 	return profitted_fertilizer
 
 def fertilize_till_is_entity(entity):

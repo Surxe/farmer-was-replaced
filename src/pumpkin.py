@@ -3,9 +3,11 @@ from water import *
 from utils import two_d_arr, one_d_arr, num_of_n_in_list
 from reset import move_to_origin
 from fertilizer import fertilize_till_is_entity, profitted_fertilizer_this_run
+from sunflower import *
 
 PLANTED = 'planted' # pumpkin may still grow or die, keep visiting it
 GROWN = 'grown' # pumpkin is fully grown, it never needs another visit
+power_needed_for_cycle = 150
 
 # ---- tracker: which cells still need visiting ----
 
@@ -76,7 +78,7 @@ def plant_pumpkin():
 # first have to confirm the # of dead pumps, which takes a full 2nd iteration. So with a threshold of 1 or more confirmed pumps,
 # it wouldnt be able to apply till iter3. Applying immediately on the 2nd iter is faster every time, at least at n=6 with the current dead pumpkin odds.
 def try_fertilize_dead_pumpkin():
-	if get_entity_type() == Entities.Dead_Pumpkin and profitted_fertilizer_this_run() > 0:
+	if get_entity_type() == Entities.Dead_Pumpkin: # and profitted_fertilizer_this_run() > 0:
 		fertilize_till_is_entity(Entities.Pumpkin) # leaves a fully grown pumpkin
 
 def process_pump_cell(tracker):
@@ -112,8 +114,16 @@ def sweep(tracker, col_then_row, full_pass):
 # from then on any cell thats not grown is treated as a possible dead spot that it has to check,
 # and grown cells never need checking again. This leads us to the pathing algorithm
 def cycle_pump_grid():
+	# Check if we need power for the cycle first
+	global power_needed_for_cycle
+	print('power_needed_for_cycle: ', power_needed_for_cycle)
+	cycle_sunflower(power_needed_for_cycle)
+	move_to_origin()
+
+	# We got enough, lets track power we use this run and then perform
 	num_pump_items_cycle_start = num_items(Items.Pumpkin)
 	time_cycle_start = get_time()
+	power_cycle_start = num_items(Items.Power)
 	tracker = new_tracker()
 
 	sweep(tracker, True, True)
@@ -126,6 +136,7 @@ def cycle_pump_grid():
 	move_to_origin()
 	profit = num_items(Items.Pumpkin) - num_pump_items_cycle_start
 	time_taken = get_time() - time_cycle_start
+	power_needed_for_cycle = (power_cycle_start - num_items(Items.Power)) * 1.1
 	return profit, time_taken
 
 # pumpkins will be forced in the bottom left half of the grid,
@@ -149,4 +160,4 @@ if __name__ == "__main__":
 		sum_time += time
 		this_profit_rate = profit / time #pumpkins / second
 		avg_profit_rate = sum_profit / sum_time
-		print(this_profit_rate)
+		print('this_profit_rate: ', this_profit_rate)

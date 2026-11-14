@@ -2,7 +2,7 @@ from water import *
 from reset import move_to_origin
 from load_balancing import get_item_needed_most
 from pumpkin import cycle_pump_grid
-from poly_culture import cycle_poly_grid, item_is_supported_by_poly_culture
+from poly_culture import *
 from sunflower import init_registries
 
 percent_grid_tilled = 0

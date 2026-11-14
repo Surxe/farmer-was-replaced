@@ -5,6 +5,7 @@ from reset import move_to_origin
 from constants import item_to_entity, poly_culture_supported_entities
 from sunflower import *
 
+power_needed_for_cycle = 80
 
 def item_is_supported_by_poly_culture(item):
 	if item not in item_to_entity:
@@ -22,6 +23,11 @@ def cycle_poly_grid(default_entity=Entities.Carrot):
 		comp_location = comp[1]
 		preference_registry[comp_location[0]][comp_location[1]] = comp_entity
 
+	global power_needed_for_cycle
+	print(power_needed_for_cycle)
+	cycle_sunflower(power_needed_for_cycle)
+
+	starting_power = num_items(Items.Power)
 	for j in range(get_world_size()):
 		for i in range(get_world_size()):
 			if is_sunflower_designated_tile():
@@ -40,9 +46,12 @@ def cycle_poly_grid(default_entity=Entities.Carrot):
 					register_pref()
 			move(East)
 		move(North)
+	power_cycle_cost = starting_power - num_items(Items.Power)
+	power_needed_for_cycle = power_cycle_cost * 1.15 # padding
 
 if __name__ == '__main__':
 	clear()
+	do_a_flip()
 	move_to_origin()
 	while True:
 		cycle_poly_grid()
