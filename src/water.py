@@ -14,6 +14,7 @@ def update_water_thresh(magnitude):
 	REFILL_WATER_IF_BELOW_THRESH = max(0, min(1, REFILL_WATER_IF_BELOW_THRESH + WATER_THRESH_CHANGE_PER_UPDATE * magnitude))
 
 def water():
+	return
 	# assumes were on tilled land already
 	# only till if we profitted water this cycle
 	# and if the current cell has < 35% water
